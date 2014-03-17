@@ -5,7 +5,9 @@ __all__ = ('WindowsBalloonTip', 'balloon_tip')
 
 import time
 import ctypes
-import win_api_defs
+from plyer.platforms.win.libs import win_api_defs
+from plyer.compat import PY2
+
 from threading import RLock
 
 
@@ -54,10 +56,13 @@ class WindowsBalloonTip(object):
     def __init__(self, title, message, app_name, app_icon='', timeout=10):
         ''' app_icon if given is a icon file.
         '''
+        if PY2:
+            title, message, app_name, app_icon = title.decode('utf-8'),\
+                message.decode('utf-8'), app_name.decode('utf-8'), app_icon.decode('utf-8')
 
         wnd_class_ex = win_api_defs.get_WNDCLASSEXW()
         wnd_class_ex.lpszClassName = ('PlyerTaskbar' +
-            str(WindowsBalloonTip._get_unique_id())).decode('utf8')
+            type("")(WindowsBalloonTip._get_unique_id()))
         # keep ref to it as long as window is alive
         wnd_class_ex.lpfnWndProc =\
         win_api_defs.WindowProc(win_api_defs.DefWindowProcW)
@@ -81,11 +86,11 @@ class WindowsBalloonTip(object):
         # load icon
         if app_icon:
             icon_flags = LR_LOADFROMFILE | LR_DEFAULTSIZE
-            hicon = win_api_defs.LoadImageW(None, app_icon.decode('utf8'),
+            hicon = win_api_defs.LoadImageW(None, app_icon,
                                             IMAGE_ICON, 0, 0, icon_flags)
             if hicon is None:
                 raise Exception('Could not load icon {}'.
-                                format(icon_path_name).decode('utf8'))
+                                format(icon_path_name))
             self._balloon_icon = self._hicon = hicon
         else:
             self._hicon = win_api_defs.LoadIconW(None,
@@ -100,7 +105,7 @@ class WindowsBalloonTip(object):
             win_api_defs.DestroyIcon(self._hicon)
         if self._wnd_class_ex is not None:
             win_api_defs.UnregisterClassW(self._class_atom,
-                                          self._wnd_class_ex.hInstance)
+                                        self._wnd_class_ex.hInstance)
         if self._hwnd is not None:
             win_api_defs.DestroyWindow(self._hwnd)
 
@@ -119,16 +124,16 @@ class WindowsBalloonTip(object):
             if self._balloon_icon is not None:
                 icon_flag = NIIF_USER | NIIF_LARGE_ICON
         notify_data = win_api_defs.get_NOTIFYICONDATAW(0, self._hwnd,
-            id(self), flags, 0, hicon, app_name.decode('utf8')[:127], 0, 0,
-            message.decode('utf8')[:255], NOTIFYICON_VERSION_4,
-            title.decode('utf8')[:63], icon_flag, win_api_defs.GUID(),
+            id(self), flags, 0, hicon, type('')(app_name)[:127], 0, 0,
+            (message)[:255], NOTIFYICON_VERSION_4,
+            title[:63], icon_flag, win_api_defs.GUID(),
             self._balloon_icon)
 
         self._notify_data = notify_data
         if not win_api_defs.Shell_NotifyIconW(NIM_ADD, notify_data):
             raise Exception('Shell_NotifyIconW failed.')
         if not win_api_defs.Shell_NotifyIconW(NIM_SETVERSION,
-                                              notify_data):
+                                            notify_data):
             raise Exception('Shell_NotifyIconW failed.')
 
     def remove_notify(self):

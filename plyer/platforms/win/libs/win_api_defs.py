@@ -2,18 +2,18 @@
 '''
 
 __all__ = ('GUID', 'get_DLLVERSIONINFO', 'MAKEDLLVERULL',
-           'get_NOTIFYICONDATAW', 'CreateWindowExW', 'WindowProc',
-           'DefWindowProcW', 'get_WNDCLASSEXW', 'GetModuleHandleW',
-           'RegisterClassExW', 'UpdateWindow', 'LoadImageW',
-           'Shell_NotifyIconW', 'DestroyIcon', 'UnregisterClassW',
-           'DestroyWindow', 'LoadIconW')
+        'get_NOTIFYICONDATAW', 'CreateWindowExW', 'WindowProc',
+        'DefWindowProcW', 'get_WNDCLASSEXW', 'GetModuleHandleW',
+        'RegisterClassExW', 'UpdateWindow', 'LoadImageW',
+        'Shell_NotifyIconW', 'DestroyIcon', 'UnregisterClassW',
+        'DestroyWindow', 'LoadIconW')
 
 import ctypes
-from ctypes import Structure, windll, sizeof, byref, POINTER, memset,\
-    WINFUNCTYPE
-from ctypes.wintypes import DWORD, HICON, HWND, UINT, WCHAR, WORD, BYTE,\
-    HRESULT, LPCWSTR, LPWSTR, INT, LPVOID, HINSTANCE, HMENU, LPARAM, WPARAM,\
-    HBRUSH, HMODULE, ATOM, BOOL, HANDLE, LONG, HHOOK
+from ctypes import (Structure, windll, sizeof, byref, POINTER, memset,
+    WINFUNCTYPE, HRESULT)
+from ctypes.wintypes import (DWORD, HICON, HWND, UINT, WCHAR, WORD, BYTE,
+    LPCWSTR, LPWSTR, INT, LPVOID, HINSTANCE, HMENU, LPARAM, WPARAM,
+    HBRUSH, HMODULE, ATOM, BOOL, HANDLE, LONG, HHOOK)
 LRESULT = LPARAM
 HCURSOR = HICON
 
@@ -95,7 +95,7 @@ def get_NOTIFYICONDATAW(*largs):
     if DllGetVersion(version):
         raise Exception('Cannot get Windows version numbers.')
     v = MAKEDLLVERULL(version.dwMajorVersion, version.dwMinorVersion,
-                      version.dwBuildNumber, version.dwPlatformID)
+                    version.dwBuildNumber, version.dwPlatformID)
 
     # from the version info find the NOTIFYICONDATA size
     if v >= MAKEDLLVERULL(6, 0, 6, 0):
