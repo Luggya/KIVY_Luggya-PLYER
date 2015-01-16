@@ -422,3 +422,16 @@ class Battery(object):
 
     def _get_state(self):
         raise NotImplementedError()
+
+
+class Dialog(object):
+    '''Provide Native Dialogs for a particular OS
+    '''
+
+    def open(self, path, type='open', choose_dir=False,
+        choose_files=True, multiselect=False):
+        raise NotImplementedError()
+
+    def save(self, path='', _filter='', name_field=''):
+        raise NotImplementedError()
+

@@ -60,3 +60,6 @@ uniqueid = Proxy(
 #: Battery proxy to :class:`plyer.facades.Battery`
 battery = Proxy(
     'battery', facades.Battery)
+
+#: Native Dialogs Proxy to :class:`plyer.facades.dialogs`
+dialog = Proxy('dialog', facades.Dialog)
